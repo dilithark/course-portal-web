@@ -151,7 +151,9 @@ header+main{padding-top:18px}
 .brand span{color:var(--br)}
 .who{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
 .corner-logo{height:48px;width:auto;display:block;filter:drop-shadow(0 4px 10px rgba(0,0,0,.35))}
-.corner-logo.fixed{position:fixed;top:14px;right:18px;z-index:5;height:56px}
+.corner-name{display:block}
+.corner-name.fixed{position:fixed;top:18px;right:18px;z-index:5}
+.corner-logo.fixed{position:fixed;top:14px;left:18px;z-index:5;height:56px}
 button,input,textarea,select{font:inherit;color:inherit}
 input,textarea,select{
   width:100%;
@@ -345,7 +347,7 @@ function login(){
 
 function shell(){
  const me=U(sess);
- return `<header><strong class="brand">${esc(me.name)}</strong>${LOGO('fixed')}</header><main>${ui.err?`<p class="er" role="alert">${esc(ui.err)}</p>`:''}${{student,mentor,admin}[me.role]()}</main>`}
+ return `<header>${LOGO('fixed')}<strong class="brand corner-name fixed">${esc(me.name)}</strong></header><main>${ui.err?`<p class="er" role="alert">${esc(ui.err)}</p>`:''}${{student,mentor,admin}[me.role]()}</main>`}
 
 /* Student */
 function student(){
