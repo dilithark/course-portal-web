@@ -3,49 +3,70 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>RL Academy 2026</title>
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700&family=Public+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<title>Richmond Live Academy 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#F2F5F9;--sf:#FFFFFF;--ink:#14213D;--mu:#5B6882;--ln:#DCE2EC;--br:#0F766E;--bi:#FFFFFF;--ac:#F2B134;--ok:#15803D;--er:#B42318;color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
-@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0E1626;--sf:#16213A;--ink:#E8EDF7;--mu:#9AA7BF;--ln:#26334F;--br:#3CC4B4;--bi:#06201C;--ok:#4ADE80;--er:#F87171;color-scheme:dark}}
-:root[data-theme="dark"]{--bg:#0E1626;--sf:#16213A;--ink:#E8EDF7;--mu:#9AA7BF;--ln:#26334F;--br:#3CC4B4;--bi:#06201C;--ok:#4ADE80;--er:#F87171;color-scheme:dark}
+:root{--bg:#F1EFEA;--sf:#FFFFFF;--ink:#111111;--mu:#5E5A55;--ln:#E0DBD1;--br:#FF5A14;--bi:#111111;--lk:#C2410C;--ac:#F5B21B;--rd:#D8341F;--ok:#15803D;--er:#B42318;--pat:#111;color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#15110F;--sf:#201B18;--ink:#F4EFE8;--mu:#B5ADA2;--ln:#3A332D;--br:#FF6A2A;--bi:#111111;--lk:#FF8A4C;--ok:#4ADE80;--er:#F87171;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#15110F;--sf:#201B18;--ink:#F4EFE8;--mu:#B5ADA2;--ln:#3A332D;--br:#FF6A2A;--bi:#111111;--lk:#FF8A4C;--ok:#4ADE80;--er:#F87171;color-scheme:dark}
 html{scroll-padding-top:env(safe-area-inset-top,0px)}
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 'Public Sans',system-ui,sans-serif}
-h1,h2,h3{font-family:'Bricolage Grotesque','Public Sans',system-ui,sans-serif;line-height:1.15;margin:0 0 .4em}
-h1{font-size:2.2rem}h2{font-size:1.5rem}h3{font-size:1.1rem}
-main{max-width:960px;margin:0 auto;padding:20px 16px 48px}
-main.narrow{max-width:460px}
-header{display:flex;gap:12px;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid var(--ln);background:var(--sf);flex-wrap:wrap}
-.brand{font-family:'Bricolage Grotesque',system-ui,sans-serif;font-size:1.15rem}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 'Barlow',system-ui,sans-serif;min-height:100vh;position:relative}
+/* tribal pattern frame, echoing the poster border */
+body::before,body::after{content:"";position:fixed;top:0;bottom:0;width:10px;z-index:5;pointer-events:none;
+ background:
+  repeating-linear-gradient(180deg,#111 0 12px,#FF5A14 12px 24px,#F5B21B 24px 36px,#D8341F 36px 48px,#F1EFEA 48px 60px)}
+body::before{left:0}body::after{right:0}
+h1,h2,h3{font-family:'Anton','Barlow',system-ui,sans-serif;font-weight:400;text-transform:uppercase;letter-spacing:.015em;line-height:1.05;margin:0 0 .4em}
+h1{font-size:clamp(2.6rem,9vw,4.2rem)}
+h1 .o,h2 .o{color:var(--br)}
+h2{font-size:2rem}
+h3{font-size:1.2rem;letter-spacing:.03em}
+main{max-width:960px;margin:0 auto;padding:24px 22px 56px}
+main.narrow{max-width:480px;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding-top:24px;padding-bottom:24px}
+main.narrow form{width:100%;text-align:left}
+main.narrow h1{margin-bottom:.3em}
+header{display:flex;gap:12px;align-items:center;justify-content:space-between;padding:12px 22px;background:var(--sf);flex-wrap:wrap;position:relative;border-bottom:3px solid var(--ink)}
+header::after{content:"";position:absolute;left:0;right:0;bottom:-13px;height:10px;
+ background:repeating-linear-gradient(90deg,#111 0 14px,#FF5A14 14px 28px,#F5B21B 28px 42px,#D8341F 42px 56px,#F1EFEA 56px 70px)}
+header+main{padding-top:36px}
+.brand{font-family:'Anton',system-ui,sans-serif;font-size:1.35rem;text-transform:uppercase;letter-spacing:.03em;font-weight:400}
+.brand span{color:var(--br)}
 button,input,textarea,select{font:inherit;color:inherit}
-input,textarea,select{width:100%;padding:9px 11px;border:1px solid var(--ln);border-radius:8px;background:var(--sf)}
+input,textarea,select{width:100%;padding:10px 12px;border:1.5px solid var(--ink);border-radius:6px;background:var(--sf)}
 :focus-visible{outline:3px solid var(--ac);outline-offset:2px}
-.btn{background:var(--br);color:var(--bi);border:0;border-radius:8px;padding:9px 16px;font-weight:600;cursor:pointer;white-space:nowrap;text-decoration:none;display:inline-block}
-.btn.d{background:transparent;color:var(--er);border:1px solid var(--er)}
-.btn.sm{padding:5px 11px;font-size:.9rem}
-.link{background:none;border:0;color:var(--br);cursor:pointer;text-decoration:underline;padding:4px}
-.seg,.tabs{display:flex;gap:6px;flex-wrap:wrap;margin:14px 0}
-.seg button,.tabs button{border:1px solid var(--ln);background:var(--sf);border-radius:999px;padding:7px 15px;cursor:pointer}
-.seg .on,.tabs .on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px;margin-top:14px}
-.card{text-align:left;display:flex;flex-direction:column;gap:8px;background:var(--sf);border:1px solid var(--ln);border-top:6px solid hsl(var(--h) 62% 44%);border-radius:10px;padding:16px;cursor:pointer}
-.card:hover{border-color:hsl(var(--h) 62% 44%)}
+.btn{background:var(--br);color:var(--bi);border:2px solid #111;border-radius:6px;padding:9px 18px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;cursor:pointer;white-space:nowrap;text-decoration:none;display:inline-block;box-shadow:3px 3px 0 #111;transition:transform .08s,box-shadow .08s}
+.btn:hover{transform:translate(1px,1px);box-shadow:2px 2px 0 #111}
+.btn:active{transform:translate(3px,3px);box-shadow:0 0 0 #111}
+.btn.d{background:transparent;color:var(--er);border:2px solid var(--er);box-shadow:none}
+.btn.sm{padding:5px 12px;font-size:.85rem;box-shadow:2px 2px 0 #111}
+.btn.d.sm{box-shadow:none}
+.link{background:none;border:0;color:var(--lk);cursor:pointer;text-decoration:underline;padding:4px;font-weight:600}
+.seg,.tabs{display:flex;gap:8px;flex-wrap:wrap;margin:16px 0}
+.seg button,.tabs button{border:2px solid var(--ink);background:var(--sf);border-radius:4px;padding:7px 16px;cursor:pointer;font-weight:700;text-transform:uppercase;letter-spacing:.04em;font-size:.9rem}
+.seg .on,.tabs .on{background:var(--br);color:var(--bi);box-shadow:3px 3px 0 var(--ink)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:18px;margin-top:16px}
+.card{text-align:left;display:flex;flex-direction:column;gap:10px;background:var(--sf);border:2px solid var(--ink);border-top:10px solid hsl(var(--h) 85% 50%);border-radius:8px;padding:16px;cursor:pointer;box-shadow:5px 5px 0 var(--ink);transition:transform .1s,box-shadow .1s}
+.card:hover{transform:translate(2px,2px);box-shadow:3px 3px 0 var(--ink)}
 .card p{margin:0}
-.tag{display:inline-block;align-self:flex-start;font-size:.85rem;font-weight:600;padding:3px 10px;border-radius:999px;background:var(--ac);color:#3A2A00}
-.tag.ok{background:var(--br);color:var(--bi)}
-.box{background:var(--sf);border:1px solid var(--ln);border-radius:10px;padding:16px;margin:12px 0}
+.tag{display:inline-block;align-self:flex-start;font-size:.8rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;padding:3px 10px;border-radius:2px;background:var(--br);color:#111}
+.tag.ok{background:var(--ink);color:var(--bg)}
+.box{background:var(--sf);border:1px solid var(--ln);border-left:6px solid var(--br);border-radius:8px;padding:16px;margin:14px 0}
 .box p{margin:.3em 0}
+form.box{border:1.5px dashed var(--br);border-left:1.5px dashed var(--br);border-radius:12px}
 .inline{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
 .inline input{flex:1;min-width:180px}
-.stack{display:grid;gap:8px;margin:10px 0}
-.row{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:11px 14px;background:var(--sf);border:1px solid var(--ln);border-radius:8px;margin:8px 0;flex-wrap:wrap}
+.stack{display:grid;gap:10px;margin:12px 0}
+.row{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px 14px;background:var(--sf);border:1px solid var(--ln);border-left:6px solid var(--ac);border-radius:8px;margin:10px 0;flex-wrap:wrap}
 .btn-row{width:100%;cursor:pointer;text-align:left}
-.mu{color:var(--mu)}.okt{color:var(--ok)}.er{color:var(--er)}.pair{display:flex;gap:8px;flex-wrap:wrap}.stack label{display:grid;gap:4px}
-.empty{padding:22px;border:1px dashed var(--ln);border-radius:10px;color:var(--mu)}
-a{color:var(--br);word-break:break-all}
+.mu{color:var(--mu)}.okt{color:var(--ok);font-weight:600}.er{color:var(--er)}.pair{display:flex;gap:8px;flex-wrap:wrap}.stack label{display:grid;gap:4px;font-weight:500}
+.empty{padding:24px;border:2px dashed var(--br);border-radius:12px;color:var(--mu);background:var(--sf)}
+a{color:var(--lk);word-break:break-all}
 .sel{width:auto;min-width:170px}
 .pw{white-space:pre-wrap}
+.kicker{display:inline-block;background:var(--br);color:#111;font-family:'Anton',sans-serif;text-transform:uppercase;font-size:1.3rem;letter-spacing:.02em;padding:4px 18px;margin-bottom:12px}
+.meetbadge{display:inline-block;border:1.5px dashed var(--br);border-radius:12px;padding:6px 14px;background:var(--sf);font-weight:600;margin:6px 0 4px}
+@media(max-width:600px){body::before,body::after{width:6px}main{padding:20px 16px 48px}header{padding:12px 16px}h2{font-size:1.7rem}}
 </style>
 </head>
 <body>
@@ -85,19 +106,19 @@ const cap=s=>s[0].toUpperCase()+s.slice(1);
 function render(){$('#app').innerHTML=sess&&U(sess)?shell():login()}
 
 function login(){
- return `<main class="narrow"><h1>Course Portal</h1><p class="mu">Sign in with the email and password you were given.</p>
+ return `<main class="narrow"><span class="kicker">Welcome to</span><h1>Richmond Live <span class="o">Academy</span></h1><p class="mu">Sign in with the email and password you were given.</p>
  <form data-f="login" class="box stack"><label>Email<input name="email" type="email" autocomplete="username" required></label><label>Password<input name="password" type="password" autocomplete="current-password" required></label>${ui.err?`<p class="er" role="alert">${esc(ui.err)}</p>`:''}<button class="btn">Sign in</button></form>
  <p class="mu">No login yet? Ask your course admin.</p></main>`}
 
 function shell(){
  const me=U(sess);
- return `<header><strong class="brand">Course Portal</strong><span>${esc(me.name)} <span class="tag ok">${cap(me.role)}</span> <button class="link" data-a="out">Sign out</button></span></header><main>${ui.err?`<p class="er" role="alert">${esc(ui.err)}</p>`:''}${{student,mentor,admin}[me.role]()}</main>`}
+ return `<header><strong class="brand">Richmond Live <span>Academy</span></strong><span>${esc(me.name)} <span class="tag ok">${cap(me.role)}</span> <button class="link" data-a="out">Sign out</button></span></header><main>${ui.err?`<p class="er" role="alert">${esc(ui.err)}</p>`:''}${{student,mentor,admin}[me.role]()}</main>`}
 
 /* Student */
 function student(){
  const mine=S.enr.filter(e=>e.s===sess).map(e=>e.c);
  if(ui.course&&mine.includes(ui.course)&&C(ui.course))return portal(C(ui.course));
- return `<h2>Courses</h2><p class="mu">Select a course card to enroll and open its portal.</p><div class="grid">${S.courses.map(c=>{const on=mine.includes(c.id),m=c.mentors.map(U).filter(Boolean);return `<button class="card" style="--h:${c.hue}" data-a="${on?'open':'enroll'}" data-v="${c.id}"><h3>${esc(c.name)}</h3><p>${esc(c.desc)}</p><span class="mu">${m.length?(m.length>1?'Mentors: ':'Mentor: ')+esc(m.map(x=>x.name).join(' and ')):'Mentor to be assigned'}</span><span class="tag ${on?'ok':''}">${on?'Enrolled: open portal':'Enroll'}</span></button>`}).join('')}</div>`}
+ return `<h2>Our <span class="o">Courses</span></h2><p class="mu">Select a course card to enroll and open its portal.</p><div class="grid">${S.courses.map(c=>{const on=mine.includes(c.id),m=c.mentors.map(U).filter(Boolean);return `<button class="card" style="--h:${c.hue}" data-a="${on?'open':'enroll'}" data-v="${c.id}"><h3>${esc(c.name)}</h3><p>${esc(c.desc)}</p><span class="mu">${m.length?(m.length>1?'Mentors: ':'Mentor: ')+esc(m.map(x=>x.name).join(' and ')):'Mentor to be assigned'}</span><span class="tag ${on?'ok':''}">${on?'Enrolled: open portal':'Enroll'}</span></button>`}).join('')}</div>`}
 
 function portal(c){
  const t=ui.tab||'work';let b='';
@@ -109,7 +130,7 @@ function portal(c){
   b=S.meet.filter(m=>m.c===c.id).map(m=>`<div class="row"><div><h3>${esc(m.title)}</h3><span class="mu">${m.when?fmt(m.when):'Time not set'}</span></div><a class="btn" href="${esc(url(m.url))}" target="_blank" rel="noopener">Join meeting</a></div>`).join('')||empty('No class meetings yet. Links added by your mentor will appear here.')}
  if(t==='news'){
   b=S.ann.filter(n=>n.c===c.id).sort((x,y)=>y.at-x.at).map(n=>`<article class="box"><p class="pw">${esc(n.text)}</p><p class="mu">${fmt(n.at)}</p></article>`).join('')||empty('No announcements yet.')}
- return `<button class="link" data-a="back">All courses</button><h2>${esc(c.name)}</h2>${tabbar([['work','Assigned work'],['meet','Class meetings'],['news','Announcements']],t)}${b}`}
+ return `<button class="link" data-a="back">← All courses</button><h2>${esc(c.name)}</h2>${tabbar([['work','Assigned work'],['meet','Class meetings'],['news','Announcements']],t)}${b}`}
 
 /* Mentor */
 function mentor(){
@@ -148,7 +169,7 @@ function admin(){
  if(t==='students'){
   b=ss.map(s=>{const cs=S.enr.filter(e=>e.s===s.id).map(e=>C(e.c)&&C(e.c).name).filter(Boolean);return `<div class="row"><div><h3>${esc(s.name)}</h3><span class="mu">${esc(s.email||'')}</span><br><span class="mu">${cs.length?esc(cs.join(', ')):'Not enrolled in any course'}</span><form data-f="setpw" data-v="${s.id}" class="inline"><input name="pw" type="text" minlength="8" placeholder="New password" required><button class="btn sm">Set password</button></form></div><button class="btn d sm" data-a="delstudent" data-v="${s.id}">Remove student</button></div>`}).join('')||empty('No students yet. Add the first one below.');
   b+=`<form data-f="newstudent" class="box stack"><h3>Add a student</h3><input name="name" placeholder="Student name" required><label>Email (their username)<input name="email" type="email" required></label><label>Password you give them<input name="password" type="text" minlength="8" required></label><button class="btn">Add student</button></form>`}
- return `<h2>Administration</h2><p class="mu">${S.courses.length} courses, ${ms.length} mentors, ${ss.length} students</p>${tabbar([['courses','Courses'],['mentors','Mentors'],['students','Students']],t)}${b}`}
+ return `<h2>Admin<span class="o">istration</span></h2><p class="mu">${S.courses.length} courses, ${ms.length} mentors, ${ss.length} students</p>${tabbar([['courses','Courses'],['mentors','Mentors'],['students','Students']],t)}${b}`}
 
 document.addEventListener('click',e=>{
  const b=e.target.closest('[data-a]');if(!b)return;const a=b.dataset.a,v=b.dataset.v;
