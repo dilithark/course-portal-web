@@ -85,11 +85,9 @@ const cap=s=>s[0].toUpperCase()+s.slice(1);
 function render(){$('#app').innerHTML=sess&&U(sess)?shell():login()}
 
 function login(){
- const reg=ui.reg;
- return `<main class="narrow"><h1>Course Portal</h1><p class="mu">${reg?'Create your student account.':'Sign in with your email and password.'}</p>
- <form data-f="${reg?'register':'login'}" class="box stack">${reg?'<label>Full name<input name="name" autocomplete="name" required></label>':''}<label>Email<input name="email" type="email" autocomplete="username" required></label><label>Password<input name="password" type="password" ${reg?'minlength="8" autocomplete="new-password"':'autocomplete="current-password"'} required></label>${ui.err?`<p class="er" role="alert">${esc(ui.err)}</p>`:''}<button class="btn">${reg?'Create account':'Sign in'}</button></form>
- <button class="link" data-a="reg">${reg?'I already have an account':'New student? Create an account'}</button>
- <p class="mu">Mentor and admin accounts are created by an admin.</p></main>`}
+ return `<main class="narrow"><h1>Course Portal</h1><p class="mu">Sign in with the email and password you were given.</p>
+ <form data-f="login" class="box stack"><label>Email<input name="email" type="email" autocomplete="username" required></label><label>Password<input name="password" type="password" autocomplete="current-password" required></label>${ui.err?`<p class="er" role="alert">${esc(ui.err)}</p>`:''}<button class="btn">Sign in</button></form>
+ <p class="mu">No login yet? Ask your course admin.</p></main>`}
 
 function shell(){
  const me=U(sess);
@@ -148,13 +146,13 @@ function admin(){
   b=ms.map(m=>{const cs=S.courses.filter(c=>c.mentors.includes(m.id)).map(c=>c.name);return `<div class="row"><div><h3>${esc(m.name)}</h3><span class="mu">${esc(m.email||'')}</span><br><span class="mu">${cs.length?esc(cs.join(', ')):'No courses assigned'}</span><form data-f="setpw" data-v="${m.id}" class="inline"><input name="pw" type="text" minlength="8" placeholder="New password" required><button class="btn sm">Set password</button></form></div><button class="btn d sm" data-a="delmentor" data-v="${m.id}">Remove mentor</button></div>`}).join('')||empty('No mentors yet.');
   b+=`<form data-f="newmentor" class="box stack"><h3>Add a mentor</h3><input name="name" placeholder="Mentor name" required><label>Email (their username)<input name="email" type="email" required></label><label>Password you give them<input name="password" type="text" minlength="8" required></label><button class="btn">Add mentor</button></form>`}
  if(t==='students'){
-  b=ss.map(s=>{const cs=S.enr.filter(e=>e.s===s.id).map(e=>C(e.c)&&C(e.c).name).filter(Boolean);return `<div class="row"><div><h3>${esc(s.name)}</h3><span class="mu">${cs.length?esc(cs.join(', ')):'Not enrolled in any course'}</span></div><button class="btn d sm" data-a="delstudent" data-v="${s.id}">Remove student</button></div>`}).join('')||empty('No students yet.')}
+  b=ss.map(s=>{const cs=S.enr.filter(e=>e.s===s.id).map(e=>C(e.c)&&C(e.c).name).filter(Boolean);return `<div class="row"><div><h3>${esc(s.name)}</h3><span class="mu">${esc(s.email||'')}</span><br><span class="mu">${cs.length?esc(cs.join(', ')):'Not enrolled in any course'}</span><form data-f="setpw" data-v="${s.id}" class="inline"><input name="pw" type="text" minlength="8" placeholder="New password" required><button class="btn sm">Set password</button></form></div><button class="btn d sm" data-a="delstudent" data-v="${s.id}">Remove student</button></div>`}).join('')||empty('No students yet. Add the first one below.');
+  b+=`<form data-f="newstudent" class="box stack"><h3>Add a student</h3><input name="name" placeholder="Student name" required><label>Email (their username)<input name="email" type="email" required></label><label>Password you give them<input name="password" type="text" minlength="8" required></label><button class="btn">Add student</button></form>`}
  return `<h2>Administration</h2><p class="mu">${S.courses.length} courses, ${ms.length} mentors, ${ss.length} students</p>${tabbar([['courses','Courses'],['mentors','Mentors'],['students','Students']],t)}${b}`}
 
 document.addEventListener('click',e=>{
  const b=e.target.closest('[data-a]');if(!b)return;const a=b.dataset.a,v=b.dataset.v;
- if(a==='reg'){ui.reg=!ui.reg;ui.err=''}
- else if(a==='out'){setTok(null);sess=null;ui.err='';ui.tab='';ui.course=''}
+ if(a==='out'){setTok(null);sess=null;ui.err='';ui.tab='';ui.course=''}
  else if(a==='open'){ui.course=v;ui.tab='work';ui.err=''}
  else if(a==='back')ui.course='';
  else if(a==='tab'){ui.tab=v;ui.err='';ui.editCourse='';ui.delCourse=''}
@@ -183,12 +181,12 @@ document.addEventListener('submit',e=>{
  const auth=async p=>{const r=await api(p,'POST',d);setTok(r.token);sess=String(r.user.id);ui.tab='';ui.course=''};
  const run={
   login:()=>auth('/api/login'),
-  register:()=>auth('/api/register'),
   submit:()=>api(`/api/assignments/${v}/submission`,'PUT',{link:d.link}),
   asg:()=>api(`/api/courses/${cid}/assignments`,'POST',{title:d.title,desc:d.desc,due:d.due||null}),
   meet:()=>api(`/api/courses/${cid}/meetings`,'POST',{title:d.title,url:d.url,when:d.when}),
   ann:()=>api(`/api/courses/${cid}/announcements`,'POST',{text:d.text}),
   newmentor:()=>api('/api/admin/mentors','POST',d),
+  newstudent:()=>api('/api/admin/students','POST',d),
   setpw:()=>api(`/api/admin/users/${v}/password`,'PUT',{password:d.pw}),
   newcourse:()=>api('/api/admin/courses','POST',{name:d.name,desc:d.desc}),
   editcourse:()=>api(`/api/admin/courses/${v}`,'PUT',{name:d.name,desc:d.desc}).then(()=>{ui.editCourse=''})
