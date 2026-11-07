@@ -60,8 +60,8 @@ const fd=f=>Object.fromEntries(new FormData(f));
 const fmt=t=>t?new Date(t).toLocaleString([], {dateStyle:'medium',timeStyle:'short'}):'';
 const fmtD=t=>t?new Date(t+'T00:00').toLocaleDateString([], {dateStyle:'medium'}):'';
 
-const API='https://course-portal-api-production.up.railway.app'; // your Railway domain, no trailing slash
-let S={courses:[],users:[],enr:[],asg:[],sub:[],ann:[],meet:[]},sess=null,tok=null,ui={tab:'',course:'',err:'',reg:false};
+const API='https://course-portal-api-production.up.railway.app';
+let S={courses:[],users:[],enr:[],asg:[],sub:[],ann:[],meet:[]},sess=null,tok=null,ui={tab:'',course:'',err:'',reg:false,editCourse:'',delCourse:''};
 try{tok=localStorage.getItem('cp_token')}catch(e){}
 async function api(path,method,body){
  const r=await fetch(API+path,{method:method||'GET',headers:{'Content-Type':'application/json',...(tok?{Authorization:'Bearer '+tok}:{})},body:body?JSON.stringify(body):undefined});
@@ -131,10 +131,19 @@ function mentor(){
  return `<h2>${esc(c.name)}</h2><p class="mu">${en.length} students enrolled</p>${cs.length>1?`<div class="seg">${cs.map(x=>`<button class="${x.id===c.id?'on':''}" data-a="course" data-v="${x.id}">${esc(x.name)}</button>`).join('')}</div>`:''}${tabbar([['subs','Submissions'],['assign','Assign work'],['meet','Meet links'],['news','Announcements']],t)}${b}`}
 
 /* Admin */
+function courseRow(c,ms){
+ if(ui.editCourse===c.id)return `<form data-f="editcourse" data-v="${c.id}" class="box stack"><h3>Edit course</h3><label>Course name<input name="name" value="${esc(c.name)}" maxlength="120" required></label><label>Description<input name="desc" value="${esc(c.desc)}" maxlength="500"></label><div class="inline"><button class="btn">Save changes</button><button type="button" class="btn d" data-a="canceledit">Cancel</button></div></form>`;
+ const n=cnt(c.id);
+ const sel=`<div class="pair">${[0,1].map(i=>`<select class="sel" data-a="setmentor" data-v="${c.id}" data-i="${i}" aria-label="Mentor ${i+1} for ${esc(c.name)}"><option value="">No mentor ${i+1}</option>${ms.map(m=>`<option value="${m.id}" ${m.id===c.mentors[i]?'selected':''} ${m.id===c.mentors[1-i]?'disabled':''}>${esc(m.name)}</option>`).join('')}</select>`).join('')}</div>`;
+ const acts=ui.delCourse===c.id
+  ?`<div class="box stack"><p>Remove ${esc(c.name)}? This also deletes its enrollments, assignments, submissions, announcements and meeting links. You can’t undo this.</p><div class="inline"><button class="btn d" data-a="delcourse" data-v="${c.id}">Yes, remove course</button><button class="btn" data-a="canceldel">Keep course</button></div></div>`
+  :`<div class="inline"><button class="btn sm" data-a="editcourse" data-v="${c.id}">Edit</button><button class="btn d sm" data-a="askdel" data-v="${c.id}">Remove</button></div>`;
+ return `<div class="row"><div><h3>${esc(c.name)}</h3><span class="mu">${n} ${n===1?'student':'students'} enrolled</span></div>${sel}${acts}</div>`}
+
 function admin(){
  const t=ui.tab||'courses',ms=S.users.filter(u=>u.role==='mentor'),ss=S.users.filter(u=>u.role==='student');let b='';
  if(t==='courses'){
-  b=S.courses.map(c=>`<div class="row"><div><h3>${esc(c.name)}</h3><span class="mu">${cnt(c.id)} ${cnt(c.id)===1?'student':'students'} enrolled</span></div><div class="pair">${[0,1].map(i=>`<select class="sel" data-a="setmentor" data-v="${c.id}" data-i="${i}" aria-label="Mentor ${i+1} for ${esc(c.name)}"><option value="">No mentor ${i+1}</option>${ms.map(m=>`<option value="${m.id}" ${m.id===c.mentors[i]?'selected':''} ${m.id===c.mentors[1-i]?'disabled':''}>${esc(m.name)}</option>`).join('')}</select>`).join('')}</div></div>`).join('')+`<form data-f="newcourse" class="box stack"><h3>Add a course</h3><input name="name" placeholder="Course name" required><input name="desc" placeholder="Short description"><button class="btn">Add course</button></form>`}
+  b=S.courses.map(c=>courseRow(c,ms)).join('')+`<form data-f="newcourse" class="box stack"><h3>Add a course</h3><input name="name" placeholder="Course name" required><input name="desc" placeholder="Short description"><button class="btn">Add course</button></form>`}
  if(t==='mentors'){
   b=ms.map(m=>{const cs=S.courses.filter(c=>c.mentors.includes(m.id)).map(c=>c.name);return `<div class="row"><div><h3>${esc(m.name)}</h3><span class="mu">${esc(m.email||'')}</span><br><span class="mu">${cs.length?esc(cs.join(', ')):'No courses assigned'}</span><form data-f="setpw" data-v="${m.id}" class="inline"><input name="pw" type="text" minlength="8" placeholder="New password" required><button class="btn sm">Set password</button></form></div><button class="btn d sm" data-a="delmentor" data-v="${m.id}">Remove mentor</button></div>`}).join('')||empty('No mentors yet.');
   b+=`<form data-f="newmentor" class="box stack"><h3>Add a mentor</h3><input name="name" placeholder="Mentor name" required><label>Email (their username)<input name="email" type="email" required></label><label>Password you give them<input name="password" type="text" minlength="8" required></label><button class="btn">Add mentor</button></form>`}
@@ -148,13 +157,18 @@ document.addEventListener('click',e=>{
  else if(a==='out'){setTok(null);sess=null;ui.err='';ui.tab='';ui.course=''}
  else if(a==='open'){ui.course=v;ui.tab='work';ui.err=''}
  else if(a==='back')ui.course='';
- else if(a==='tab'){ui.tab=v;ui.err=''}
+ else if(a==='tab'){ui.tab=v;ui.err='';ui.editCourse='';ui.delCourse=''}
  else if(a==='course'){ui.course=v;ui.tab=''}
  else if(a==='enroll')return act(async()=>{await api(`/api/courses/${v}/enroll`,'POST');ui.course=v;ui.tab='work'});
  else if(a==='delasg')return act(()=>api('/api/assignments/'+v,'DELETE'));
  else if(a==='delmeet')return act(()=>api('/api/meetings/'+v,'DELETE'));
  else if(a==='delann')return act(()=>api('/api/announcements/'+v,'DELETE'));
  else if(a==='delmentor'||a==='delstudent')return act(()=>api('/api/admin/users/'+v,'DELETE'));
+ else if(a==='editcourse'){ui.editCourse=v;ui.delCourse='';ui.err=''}
+ else if(a==='canceledit')ui.editCourse='';
+ else if(a==='askdel'){ui.delCourse=v;ui.editCourse='';ui.err=''}
+ else if(a==='canceldel')ui.delCourse='';
+ else if(a==='delcourse')return act(async()=>{await api('/api/admin/courses/'+v,'DELETE');ui.delCourse=''});
  else return;
  render()});
 
@@ -176,7 +190,8 @@ document.addEventListener('submit',e=>{
   ann:()=>api(`/api/courses/${cid}/announcements`,'POST',{text:d.text}),
   newmentor:()=>api('/api/admin/mentors','POST',d),
   setpw:()=>api(`/api/admin/users/${v}/password`,'PUT',{password:d.pw}),
-  newcourse:()=>api('/api/admin/courses','POST',{name:d.name,desc:d.desc})
+  newcourse:()=>api('/api/admin/courses','POST',{name:d.name,desc:d.desc}),
+  editcourse:()=>api(`/api/admin/courses/${v}`,'PUT',{name:d.name,desc:d.desc}).then(()=>{ui.editCourse=''})
  }[k];
  if(run)act(run)});
 
