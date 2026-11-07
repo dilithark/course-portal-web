@@ -60,7 +60,7 @@ const fd=f=>Object.fromEntries(new FormData(f));
 const fmt=t=>t?new Date(t).toLocaleString([], {dateStyle:'medium',timeStyle:'short'}):'';
 const fmtD=t=>t?new Date(t+'T00:00').toLocaleDateString([], {dateStyle:'medium'}):'';
 
-const API='https://YOUR-APP.up.railway.app'; // your Railway domain, no trailing slash
+const API='https://course-portal-api-production.up.railway.app'; // your Railway domain, no trailing slash
 let S={courses:[],users:[],enr:[],asg:[],sub:[],ann:[],meet:[]},sess=null,tok=null,ui={tab:'',course:'',err:'',reg:false};
 try{tok=localStorage.getItem('cp_token')}catch(e){}
 async function api(path,method,body){
