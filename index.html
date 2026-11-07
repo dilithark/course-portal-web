@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Course Portal</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700&family=Public+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#F2F5F9;--sf:#FFFFFF;--ink:#14213D;--mu:#5B6882;--ln:#DCE2EC;--br:#0F766E;--bi:#FFFFFF;--ac:#F2B134;--ok:#15803D;--er:#B42318;color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0E1626;--sf:#16213A;--ink:#E8EDF7;--mu:#9AA7BF;--ln:#26334F;--br:#3CC4B4;--bi:#06201C;--ok:#4ADE80;--er:#F87171;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0E1626;--sf:#16213A;--ink:#E8EDF7;--mu:#9AA7BF;--ln:#26334F;--br:#3CC4B4;--bi:#06201C;--ok:#4ADE80;--er:#F87171;color-scheme:dark}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 'Public Sans',system-ui,sans-serif}
+h1,h2,h3{font-family:'Bricolage Grotesque','Public Sans',system-ui,sans-serif;line-height:1.15;margin:0 0 .4em}
+h1{font-size:2.2rem}h2{font-size:1.5rem}h3{font-size:1.1rem}
+main{max-width:960px;margin:0 auto;padding:20px 16px 48px}
+main.narrow{max-width:460px}
+header{display:flex;gap:12px;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid var(--ln);background:var(--sf);flex-wrap:wrap}
+.brand{font-family:'Bricolage Grotesque',system-ui,sans-serif;font-size:1.15rem}
+button,input,textarea,select{font:inherit;color:inherit}
+input,textarea,select{width:100%;padding:9px 11px;border:1px solid var(--ln);border-radius:8px;background:var(--sf)}
+:focus-visible{outline:3px solid var(--ac);outline-offset:2px}
+.btn{background:var(--br);color:var(--bi);border:0;border-radius:8px;padding:9px 16px;font-weight:600;cursor:pointer;white-space:nowrap;text-decoration:none;display:inline-block}
+.btn.d{background:transparent;color:var(--er);border:1px solid var(--er)}
+.btn.sm{padding:5px 11px;font-size:.9rem}
+.link{background:none;border:0;color:var(--br);cursor:pointer;text-decoration:underline;padding:4px}
+.seg,.tabs{display:flex;gap:6px;flex-wrap:wrap;margin:14px 0}
+.seg button,.tabs button{border:1px solid var(--ln);background:var(--sf);border-radius:999px;padding:7px 15px;cursor:pointer}
+.seg .on,.tabs .on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px;margin-top:14px}
+.card{text-align:left;display:flex;flex-direction:column;gap:8px;background:var(--sf);border:1px solid var(--ln);border-top:6px solid hsl(var(--h) 62% 44%);border-radius:10px;padding:16px;cursor:pointer}
+.card:hover{border-color:hsl(var(--h) 62% 44%)}
+.card p{margin:0}
+.tag{display:inline-block;align-self:flex-start;font-size:.85rem;font-weight:600;padding:3px 10px;border-radius:999px;background:var(--ac);color:#3A2A00}
+.tag.ok{background:var(--br);color:var(--bi)}
+.box{background:var(--sf);border:1px solid var(--ln);border-radius:10px;padding:16px;margin:12px 0}
+.box p{margin:.3em 0}
+.inline{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+.inline input{flex:1;min-width:180px}
+.stack{display:grid;gap:8px;margin:10px 0}
+.row{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:11px 14px;background:var(--sf);border:1px solid var(--ln);border-radius:8px;margin:8px 0;flex-wrap:wrap}
+.btn-row{width:100%;cursor:pointer;text-align:left}
+.mu{color:var(--mu)}.okt{color:var(--ok)}.er{color:var(--er)}.pair{display:flex;gap:8px;flex-wrap:wrap}.stack label{display:grid;gap:4px}
+.empty{padding:22px;border:1px dashed var(--ln);border-radius:10px;color:var(--mu)}
+a{color:var(--br);word-break:break-all}
+.sel{width:auto;min-width:170px}
+.pw{white-space:pre-wrap}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+const KEY='course-portal-v2';
+const $=s=>document.querySelector(s);
+const uid=()=>Math.random().toString(36).slice(2,9);
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const url=u=>{try{const x=new URL(u);return /^https?:$/.test(x.protocol)?x.href:''}catch(e){return ''}};
+const fd=f=>Object.fromEntries(new FormData(f));
+const fmt=t=>t?new Date(t).toLocaleString([], {dateStyle:'medium',timeStyle:'short'}):'';
+const fmtD=t=>t?new Date(t+'T00:00').toLocaleDateString([], {dateStyle:'medium'}):'';
+
+const API='https://YOUR-APP.up.railway.app'; // your Railway domain, no trailing slash
+let S={courses:[],users:[],enr:[],asg:[],sub:[],ann:[],meet:[]},sess=null,tok=null,ui={tab:'',course:'',err:'',reg:false};
+try{tok=localStorage.getItem('cp_token')}catch(e){}
+async function api(path,method,body){
+ const r=await fetch(API+path,{method:method||'GET',headers:{'Content-Type':'application/json',...(tok?{Authorization:'Bearer '+tok}:{})},body:body?JSON.stringify(body):undefined});
+ const d=await r.json().catch(()=>({}));
+ if(!r.ok){const e=new Error(d.error||'Something went wrong. Try again.');e.status=r.status;throw e}
+ return d}
+function norm(d){for(const k in d){d[k].forEach(r=>{['id','c','g','s'].forEach(f=>{if(r[f]!=null)r[f]=String(r[f])});if(r.mentors)r.mentors=r.mentors.map(String);if(r.at)r.at=new Date(r.at).getTime()})}return d}
+async function refresh(){S=norm(await api('/api/data'))}
+function setTok(t){tok=t;try{t?localStorage.setItem('cp_token',t):localStorage.removeItem('cp_token')}catch(e){}}
+async function act(fn){ui.err='';try{await fn();await refresh()}catch(e){if(e.status===401){setTok(null);sess=null}ui.err=e.message==='Failed to fetch'?'Can’t reach the server. Check your connection and try again.':e.message}render()}
+async function start(){
+ if(tok){try{const d=await api('/api/me');sess=String(d.id);await refresh()}catch(e){setTok(null);sess=null}}
+ render()}
+const U=id=>S.users.find(u=>u.id===id);
+const C=id=>S.courses.find(c=>c.id===id);
+const cnt=cid=>S.enr.filter(e=>e.c===cid).length;
+const empty=t=>`<p class="empty">${t}</p>`;
+const tabbar=(l,cur)=>`<nav class="tabs">${l.map(([k,t])=>`<button class="${k===cur?'on':''}" data-a="tab" data-v="${k}">${t}</button>`).join('')}</nav>`;
+const cap=s=>s[0].toUpperCase()+s.slice(1);
+
+function render(){$('#app').innerHTML=sess&&U(sess)?shell():login()}
+
+function login(){
+ const reg=ui.reg;
+ return `<main class="narrow"><h1>Course Portal</h1><p class="mu">${reg?'Create your student account.':'Sign in with your email and password.'}</p>
+ <form data-f="${reg?'register':'login'}" class="box stack">${reg?'<label>Full name<input name="name" autocomplete="name" required></label>':''}<label>Email<input name="email" type="email" autocomplete="username" required></label><label>Password<input name="password" type="password" ${reg?'minlength="8" autocomplete="new-password"':'autocomplete="current-password"'} required></label>${ui.err?`<p class="er" role="alert">${esc(ui.err)}</p>`:''}<button class="btn">${reg?'Create account':'Sign in'}</button></form>
+ <button class="link" data-a="reg">${reg?'I already have an account':'New student? Create an account'}</button>
+ <p class="mu">Mentor and admin accounts are created by an admin.</p></main>`}
+
+function shell(){
+ const me=U(sess);
+ return `<header><strong class="brand">Course Portal</strong><span>${esc(me.name)} <span class="tag ok">${cap(me.role)}</span> <button class="link" data-a="out">Sign out</button></span></header><main>${ui.err?`<p class="er" role="alert">${esc(ui.err)}</p>`:''}${{student,mentor,admin}[me.role]()}</main>`}
+
+/* Student */
+function student(){
+ const mine=S.enr.filter(e=>e.s===sess).map(e=>e.c);
+ if(ui.course&&mine.includes(ui.course)&&C(ui.course))return portal(C(ui.course));
+ return `<h2>Courses</h2><p class="mu">Select a course card to enroll and open its portal.</p><div class="grid">${S.courses.map(c=>{const on=mine.includes(c.id),m=c.mentors.map(U).filter(Boolean);return `<button class="card" style="--h:${c.hue}" data-a="${on?'open':'enroll'}" data-v="${c.id}"><h3>${esc(c.name)}</h3><p>${esc(c.desc)}</p><span class="mu">${m.length?(m.length>1?'Mentors: ':'Mentor: ')+esc(m.map(x=>x.name).join(' and ')):'Mentor to be assigned'}</span><span class="tag ${on?'ok':''}">${on?'Enrolled: open portal':'Enroll'}</span></button>`}).join('')}</div>`}
+
+function portal(c){
+ const t=ui.tab||'work';let b='';
+ if(t==='work'){
+  b=S.asg.filter(a=>a.c===c.id).map(a=>{
+   const s=S.sub.find(x=>x.g===a.id&&x.s===sess);
+   return `<article class="box"><h3>${esc(a.title)}</h3><p class="pw">${esc(a.desc)}</p>${a.due?`<p class="mu">Due ${fmtD(a.due)}</p>`:''}${s?`<p class="okt">Submitted: <a href="${esc(url(s.link))}" target="_blank" rel="noopener">${esc(s.link)}</a></p>`:''}<form data-f="submit" data-v="${a.id}" class="inline"><input name="link" type="url" placeholder="https://link-to-your-work" required><button class="btn">${s?'Update link':'Submit link'}</button></form></article>`}).join('')||empty('No work assigned yet. Your mentor’s assignments will show up here.')}
+ if(t==='meet'){
+  b=S.meet.filter(m=>m.c===c.id).map(m=>`<div class="row"><div><h3>${esc(m.title)}</h3><span class="mu">${m.when?fmt(m.when):'Time not set'}</span></div><a class="btn" href="${esc(url(m.url))}" target="_blank" rel="noopener">Join meeting</a></div>`).join('')||empty('No class meetings yet. Links added by your mentor will appear here.')}
+ if(t==='news'){
+  b=S.ann.filter(n=>n.c===c.id).sort((x,y)=>y.at-x.at).map(n=>`<article class="box"><p class="pw">${esc(n.text)}</p><p class="mu">${fmt(n.at)}</p></article>`).join('')||empty('No announcements yet.')}
+ return `<button class="link" data-a="back">All courses</button><h2>${esc(c.name)}</h2>${tabbar([['work','Assigned work'],['meet','Class meetings'],['news','Announcements']],t)}${b}`}
+
+/* Mentor */
+function mentor(){
+ const cs=S.courses.filter(c=>c.mentors.includes(sess));
+ if(!cs.length)return empty('An admin hasn’t assigned you to a course yet.');
+ const c=cs.find(x=>x.id===ui.course)||cs[0];ui.course=c.id;
+ const t=ui.tab||'subs',en=S.enr.filter(x=>x.c===c.id).map(x=>U(x.s)).filter(Boolean);
+ const as=S.asg.filter(a=>a.c===c.id);let b='';
+ if(t==='subs'){
+  b=as.map(a=>{const subs=S.sub.filter(x=>x.g===a.id);return `<article class="box"><h3>${esc(a.title)}</h3><p class="mu">${subs.filter(s=>en.some(u=>u.id===s.s)).length} of ${en.length} students submitted</p>${en.map(u=>{const s=subs.find(x=>x.s===u.id);return `<div class="row"><span>${esc(u.name)}</span>${s?`<a href="${esc(url(s.link))}" target="_blank" rel="noopener">View submission</a>`:'<span class="mu">Not submitted</span>'}</div>`}).join('')||'<p class="mu">No students enrolled yet.</p>'}</article>`}).join('')||empty('Assign work first. Student submissions will appear here.')}
+ if(t==='assign'){
+  b=`<form data-f="asg" class="box stack"><h3>New assignment</h3><input name="title" placeholder="Title" required><textarea name="desc" rows="3" placeholder="Instructions"></textarea><label class="mu">Due date (optional)<input name="due" type="date"></label><button class="btn">Assign to students</button></form>`+as.map(a=>`<div class="row"><div><h3>${esc(a.title)}</h3><span class="mu">${a.due?'Due '+fmtD(a.due):'No due date'}</span></div><button class="btn d sm" data-a="delasg" data-v="${a.id}">Remove</button></div>`).join('')}
+ if(t==='meet'){
+  b=`<form data-f="meet" class="box stack"><h3>Add a Google Meet link</h3><input name="title" placeholder="Meeting title" required><input name="url" type="url" placeholder="https://meet.google.com/..." required><label class="mu">Date and time (optional)<input name="when" type="datetime-local"></label><button class="btn">Add meeting link</button></form>`+S.meet.filter(m=>m.c===c.id).map(m=>`<div class="row"><div><h3>${esc(m.title)}</h3><span class="mu">${m.when?fmt(m.when):'Time not set'}</span></div><button class="btn d sm" data-a="delmeet" data-v="${m.id}">Remove</button></div>`).join('')}
+ if(t==='news'){
+  b=`<form data-f="ann" class="box stack"><h3>New announcement</h3><textarea name="text" rows="3" placeholder="Write an announcement for your students" required></textarea><button class="btn">Post announcement</button></form>`+S.ann.filter(n=>n.c===c.id).sort((x,y)=>y.at-x.at).map(n=>`<article class="box"><p class="pw">${esc(n.text)}</p><p class="mu">${fmt(n.at)}</p><button class="btn d sm" data-a="delann" data-v="${n.id}">Remove</button></article>`).join('')}
+ return `<h2>${esc(c.name)}</h2><p class="mu">${en.length} students enrolled</p>${cs.length>1?`<div class="seg">${cs.map(x=>`<button class="${x.id===c.id?'on':''}" data-a="course" data-v="${x.id}">${esc(x.name)}</button>`).join('')}</div>`:''}${tabbar([['subs','Submissions'],['assign','Assign work'],['meet','Meet links'],['news','Announcements']],t)}${b}`}
+
+/* Admin */
+function admin(){
+ const t=ui.tab||'courses',ms=S.users.filter(u=>u.role==='mentor'),ss=S.users.filter(u=>u.role==='student');let b='';
+ if(t==='courses'){
+  b=S.courses.map(c=>`<div class="row"><div><h3>${esc(c.name)}</h3><span class="mu">${cnt(c.id)} ${cnt(c.id)===1?'student':'students'} enrolled</span></div><div class="pair">${[0,1].map(i=>`<select class="sel" data-a="setmentor" data-v="${c.id}" data-i="${i}" aria-label="Mentor ${i+1} for ${esc(c.name)}"><option value="">No mentor ${i+1}</option>${ms.map(m=>`<option value="${m.id}" ${m.id===c.mentors[i]?'selected':''} ${m.id===c.mentors[1-i]?'disabled':''}>${esc(m.name)}</option>`).join('')}</select>`).join('')}</div></div>`).join('')+`<form data-f="newcourse" class="box stack"><h3>Add a course</h3><input name="name" placeholder="Course name" required><input name="desc" placeholder="Short description"><button class="btn">Add course</button></form>`}
+ if(t==='mentors'){
+  b=ms.map(m=>{const cs=S.courses.filter(c=>c.mentors.includes(m.id)).map(c=>c.name);return `<div class="row"><div><h3>${esc(m.name)}</h3><span class="mu">${esc(m.email||'')}</span><br><span class="mu">${cs.length?esc(cs.join(', ')):'No courses assigned'}</span><form data-f="setpw" data-v="${m.id}" class="inline"><input name="pw" type="text" minlength="8" placeholder="New password" required><button class="btn sm">Set password</button></form></div><button class="btn d sm" data-a="delmentor" data-v="${m.id}">Remove mentor</button></div>`}).join('')||empty('No mentors yet.');
+  b+=`<form data-f="newmentor" class="box stack"><h3>Add a mentor</h3><input name="name" placeholder="Mentor name" required><label>Email (their username)<input name="email" type="email" required></label><label>Password you give them<input name="password" type="text" minlength="8" required></label><button class="btn">Add mentor</button></form>`}
+ if(t==='students'){
+  b=ss.map(s=>{const cs=S.enr.filter(e=>e.s===s.id).map(e=>C(e.c)&&C(e.c).name).filter(Boolean);return `<div class="row"><div><h3>${esc(s.name)}</h3><span class="mu">${cs.length?esc(cs.join(', ')):'Not enrolled in any course'}</span></div><button class="btn d sm" data-a="delstudent" data-v="${s.id}">Remove student</button></div>`}).join('')||empty('No students yet.')}
+ return `<h2>Administration</h2><p class="mu">${S.courses.length} courses, ${ms.length} mentors, ${ss.length} students</p>${tabbar([['courses','Courses'],['mentors','Mentors'],['students','Students']],t)}${b}`}
+
+document.addEventListener('click',e=>{
+ const b=e.target.closest('[data-a]');if(!b)return;const a=b.dataset.a,v=b.dataset.v;
+ if(a==='reg'){ui.reg=!ui.reg;ui.err=''}
+ else if(a==='out'){setTok(null);sess=null;ui.err='';ui.tab='';ui.course=''}
+ else if(a==='open'){ui.course=v;ui.tab='work';ui.err=''}
+ else if(a==='back')ui.course='';
+ else if(a==='tab'){ui.tab=v;ui.err=''}
+ else if(a==='course'){ui.course=v;ui.tab=''}
+ else if(a==='enroll')return act(async()=>{await api(`/api/courses/${v}/enroll`,'POST');ui.course=v;ui.tab='work'});
+ else if(a==='delasg')return act(()=>api('/api/assignments/'+v,'DELETE'));
+ else if(a==='delmeet')return act(()=>api('/api/meetings/'+v,'DELETE'));
+ else if(a==='delann')return act(()=>api('/api/announcements/'+v,'DELETE'));
+ else if(a==='delmentor'||a==='delstudent')return act(()=>api('/api/admin/users/'+v,'DELETE'));
+ else return;
+ render()});
+
+document.addEventListener('change',e=>{
+ const s=e.target.closest('[data-a="setmentor"]');if(!s)return;
+ const c=C(s.dataset.v),i=+s.dataset.i,m=[c.mentors[0]||'',c.mentors[1]||''];m[i]=s.value;
+ act(()=>api(`/api/admin/courses/${c.id}/mentors`,'PUT',{mentors:m.filter(Boolean)}))});
+
+document.addEventListener('submit',e=>{
+ const f=e.target.closest('[data-f]');if(!f)return;e.preventDefault();
+ const k=f.dataset.f,d=fd(f),v=f.dataset.v,cid=ui.course;
+ const auth=async p=>{const r=await api(p,'POST',d);setTok(r.token);sess=String(r.user.id);ui.tab='';ui.course=''};
+ const run={
+  login:()=>auth('/api/login'),
+  register:()=>auth('/api/register'),
+  submit:()=>api(`/api/assignments/${v}/submission`,'PUT',{link:d.link}),
+  asg:()=>api(`/api/courses/${cid}/assignments`,'POST',{title:d.title,desc:d.desc,due:d.due||null}),
+  meet:()=>api(`/api/courses/${cid}/meetings`,'POST',{title:d.title,url:d.url,when:d.when}),
+  ann:()=>api(`/api/courses/${cid}/announcements`,'POST',{text:d.text}),
+  newmentor:()=>api('/api/admin/mentors','POST',d),
+  setpw:()=>api(`/api/admin/users/${v}/password`,'PUT',{password:d.pw}),
+  newcourse:()=>api('/api/admin/courses','POST',{name:d.name,desc:d.desc})
+ }[k];
+ if(run)act(run)});
+
+start();
+</script>
+</body>
+</html>
