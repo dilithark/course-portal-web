@@ -98,6 +98,7 @@ body::before{
     linear-gradient(135deg,rgba(255,255,255,.035) 0 12%,transparent 12% 24%,rgba(255,255,255,.02) 24% 36%,transparent 36% 100%);
   opacity:.25;
   mix-blend-mode:screen
+  
 }
 h1,h2,h3{
   font-family:'Anton','Barlow',system-ui,sans-serif;
@@ -106,6 +107,7 @@ h1,h2,h3{
   letter-spacing:.04em;
   line-height:1.02;
   margin:0 0 .4em
+  
 }
 h1{font-size:clamp(2.7rem,9vw,4.4rem)}
 h1 .o,h2 .o{color:var(--br)}
@@ -408,6 +410,7 @@ function admin(){
 
 document.addEventListener('click',e=>{
  const b=e.target.closest('[data-a]');if(!b)return;const a=b.dataset.a,v=b.dataset.v;
+  
  if(a==='out'){setTok(null);sess=null;ui.err='';ui.tab='';ui.course=''}
  else if(a==='open'){ui.course=v;ui.tab='work';ui.err=''}
  else if(a==='back')ui.course='';
@@ -422,7 +425,8 @@ document.addEventListener('click',e=>{
  else if(a==='canceledit')ui.editCourse='';
  else if(a==='askdel'){ui.delCourse=v;ui.editCourse='';ui.err=''}
  else if(a==='canceldel')ui.delCourse='';
- else if(a==='delcourse')return act(async()=>{await api('/api/admin/courses/'+v,'DELETE');ui.delCourse=''});
+ else if(a==='delcourse')return act(async()=>{await api('/api/admin/courses/'+v,'DELETE');ui.delCourse
+   
  else return;
  render()});
 
