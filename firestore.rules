@@ -1,0 +1,11 @@
+rules_version = '2';
+
+// All reads and writes go through the Next.js API (firebase-admin bypasses these rules).
+// The browser SDK is only used for Firebase Auth, so direct client access is denied.
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

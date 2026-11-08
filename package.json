@@ -1,0 +1,29 @@
+{
+  "name": "course-portal-web",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint .",
+    "create-admin": "node --env-file=.env.local scripts/create-admin.mjs",
+    "deploy-rules": "node --env-file=.env.local scripts/deploy-rules.mjs",
+    "seed-courses": "node --env-file=.env.local scripts/seed-courses.mjs"
+  },
+  "dependencies": {
+    "firebase": "^13.2.0",
+    "firebase-admin": "^14.5.0",
+    "next": "16.4.5",
+    "react": "19.3.1",
+    "react-dom": "19.3.1"
+  },
+  "devDependencies": {
+    "@types/node": "^24",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "16.4.5",
+    "typescript": "^5"
+  }
+}
